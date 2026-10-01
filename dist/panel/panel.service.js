@@ -57,12 +57,15 @@ let PanelService = class PanelService {
         const mios = prestamos.filter((p) => p.usuarioSub === sub);
         return { total: mios.length, prestamos: this.unir(mios, libros) };
     }
-    async enviar(metodo, url, cuerpo) {
+    async enviar(metodo, url, token, cuerpo) {
         let respuesta;
         try {
             respuesta = await fetch(url, {
                 method: metodo,
-                headers: cuerpo ? { 'Content-Type': 'application/json' } : {},
+                headers: {
+                    ...(cuerpo ? { 'Content-Type': 'application/json' } : {}),
+                    Authorization: token,
+                },
                 body: cuerpo ? JSON.stringify(cuerpo) : undefined,
             });
         }
@@ -74,7 +77,7 @@ let PanelService = class PanelService {
         }
         return (await respuesta.json());
     }
-    async prestar(sub, libroId) {
+    async prestar(sub, token, libroId) {
         if (typeof libroId !== 'number' || !Number.isInteger(libroId) || libroId < 1) {
             throw new BadRequestException('libroId tiene que ser un numero entero positivo');
         }
@@ -88,7 +91,7 @@ let PanelService = class PanelService {
         }
         const hoy = new Date();
         const dia = (n) => new Date(hoy.getTime() + n * 86400000).toISOString().slice(0, 10);
-        return this.enviar('POST', this.prestamosUrl, {
+        return this.enviar('POST', this.prestamosUrl, token, {
             libroId,
             usuarioSub: sub,
             desde: dia(0),
@@ -96,7 +99,7 @@ let PanelService = class PanelService {
             devuelto: false,
         });
     }
-    async devolver(sub, id) {
+    async devolver(sub, token, id) {
         const [, prestamos] = await this.traerTodo();
         const prestamo = prestamos.find((p) => p.id === id);
         if (!prestamo || prestamo.usuarioSub !== sub) {
@@ -104,7 +107,7 @@ let PanelService = class PanelService {
         }
         if (prestamo.devuelto)
             throw new ConflictException(`el prestamo ${id} ya estaba devuelto`);
-        return this.enviar('DELETE', `${this.prestamosUrl}/${id}`);
+        return this.enviar('DELETE', `${this.prestamosUrl}/${id}`, token);
     }
 };
 PanelService = __decorate([

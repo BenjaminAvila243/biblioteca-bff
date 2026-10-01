@@ -36,10 +36,10 @@ let PanelController = class PanelController {
         };
     }
     async prestar(req, cuerpo) {
-        return this.panel.prestar(req.usuario.sub, cuerpo.libroId);
+        return this.panel.prestar(req.usuario.sub, req.headers['authorization'] ?? '', cuerpo.libroId);
     }
     async devolver(req, id) {
-        return this.panel.devolver(req.usuario.sub, id);
+        return this.panel.devolver(req.usuario.sub, req.headers['authorization'] ?? '', id);
     }
 };
 __decorate([

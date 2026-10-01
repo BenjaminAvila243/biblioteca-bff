@@ -68,6 +68,6 @@ export declare class PanelService {
         }[];
     }>;
     private enviar;
-    prestar(sub: string, libroId: unknown): Promise<Prestamo>;
-    devolver(sub: string, id: number): Promise<Prestamo>;
+    prestar(sub: string, token: string, libroId: unknown): Promise<Prestamo>;
+    devolver(sub: string, token: string, id: number): Promise<Prestamo>;
 }

@@ -61,10 +61,12 @@ export declare class PanelController {
     }>;
     prestar(req: {
         usuario: Usuario;
+        headers: Record<string, string | undefined>;
     }, cuerpo: {
         libroId?: unknown;
     }): Promise<import("./panel.service.js").Prestamo>;
     devolver(req: {
         usuario: Usuario;
+        headers: Record<string, string | undefined>;
     }, id: number): Promise<import("./panel.service.js").Prestamo>;
 }
